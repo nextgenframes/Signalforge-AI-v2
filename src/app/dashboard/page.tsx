@@ -1,10 +1,32 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { AppShell } from "@/components/app-shell";
-import { LaunchInput } from "@/components/launch-state";
+import {
+  LaunchInput,
+  type LaunchProfile,
+  useLaunchProfile,
+} from "@/components/launch-state";
 import { demoInputs, generateReport, type GTMReport } from "@/lib/gtm-data";
 
 export default function DashboardPage() {
-  const report = generateReport(demoInputs["HVAC Company"]);
+  const profile = useLaunchProfile();
+  const report = useMemo(() => {
+    if (!profile) {
+      return generateReport({ ...demoInputs["HVAC Company"], dataMode: "mock" });
+    }
+
+    return generateReport({
+      idea: profile.idea,
+      industry: profile.industry,
+      location: profile.location,
+      website: "",
+      budget: profile.budget,
+      type: profile.businessType,
+      dataMode: "mock",
+    });
+  }, [profile]);
   const completedActions = 3;
   const totalActions = report.launchPlan.length;
 
@@ -22,7 +44,7 @@ export default function DashboardPage() {
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
                 AI agent workspace for launching small businesses with live web
-                intelligence, demo-safe mock data, and clear next actions.
+                intelligence, API-backed agents, and clear next actions.
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <Link
@@ -43,6 +65,7 @@ export default function DashboardPage() {
         </section>
 
         <LaunchInput />
+        <AgentPipeline profile={profile} />
 
         <div className="grid gap-4 md:grid-cols-4">
           <Metric label="ICP clarity" value="86%" helper="Buyer segment set" />
@@ -299,6 +322,98 @@ function Badge({
 function SourceBadge({ source }: { source: GTMReport["dataSource"] }) {
   const tone =
     source === "live web data" ? "green" : source === "demo data" ? "cyan" : "slate";
+  const labels = {
+    "live web data": "Live web data",
+    "demo data": "Preset report",
+    "mock data": "Local fallback",
+  };
 
-  return <Badge tone={tone}>{source}</Badge>;
+  return <Badge tone={tone}>{labels[source]}</Badge>;
+}
+
+function AgentPipeline({ profile }: { profile: LaunchProfile | null }) {
+  const [runId, setRunId] = useState(0);
+  const [activeStep, setActiveStep] = useState(profile ? 6 : 0);
+  const steps = [
+    ["MarketDiscoveryAgent", "Searches category, local intent, and demand signals"],
+    ["ICPAgent", "Builds buyer segments, pains, and triggers"],
+    ["CompetitorIntelAgent", "Finds competitors, gaps, and SERP pressure"],
+    ["PricingAgent", "Benchmarks packages and offer ladder"],
+    ["DistributionAgent", "Ranks channels by intent and budget fit"],
+    ["LaunchPlanAgent", "Creates 30 day execution plan"],
+    ["GTMScoreAgent", "Checks readiness and next best action"],
+  ];
+
+  useEffect(() => {
+    function replay() {
+      setRunId((current) => current + 1);
+    }
+
+    window.addEventListener("signalforge-launch", replay);
+    return () => window.removeEventListener("signalforge-launch", replay);
+  }, []);
+
+  useEffect(() => {
+    const reset = window.setTimeout(() => setActiveStep(0), 0);
+
+    if (!profile) {
+      return () => window.clearTimeout(reset);
+    }
+
+    const timer = window.setInterval(() => {
+      setActiveStep((current) => {
+        if (current >= steps.length) {
+          window.clearInterval(timer);
+          return current;
+        }
+        return current + 1;
+      });
+    }, 360);
+
+    return () => {
+      window.clearTimeout(reset);
+      window.clearInterval(timer);
+    };
+  }, [profile, runId, steps.length]);
+
+  return (
+    <section className="rounded-lg border border-slate-800 bg-slate-950/90 p-5 shadow-sm shadow-black/20">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm font-bold text-cyan-300">Agent pipeline replay</p>
+          <h2 className="mt-1 text-2xl font-bold text-slate-100">
+            {profile ? profile.idea : "Waiting for launch"}
+          </h2>
+        </div>
+        <Badge tone={activeStep >= steps.length ? "green" : "cyan"}>
+          {activeStep >= steps.length ? "Complete" : "Running"}
+        </Badge>
+      </div>
+      <div className="mt-5 grid gap-3 lg:grid-cols-7">
+        {steps.map(([agent, action], index) => {
+          const done = activeStep > index;
+          const running = activeStep === index;
+
+          return (
+            <div
+              key={agent}
+              className={`rounded-lg border p-3 ${
+                done
+                  ? "border-lime-400/30 bg-lime-400/10"
+                  : running
+                    ? "border-cyan-400/40 bg-cyan-400/10"
+                    : "border-slate-800 bg-slate-900/60"
+              }`}
+            >
+              <p className="text-xs font-bold uppercase text-slate-400">
+                Step {index + 1}
+              </p>
+              <p className="mt-2 text-sm font-bold text-slate-100">{agent}</p>
+              <p className="mt-2 text-xs leading-5 text-slate-400">{action}</p>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
 }

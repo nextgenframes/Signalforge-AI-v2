@@ -147,10 +147,15 @@ function DataSourceBadge({ source }: { source: GTMReport["dataSource"] }) {
     "demo data": "border-cyan-400/30 bg-cyan-400/15 text-cyan-200",
     "mock data": "border-slate-700 bg-slate-900 text-slate-300",
   };
+  const labels = {
+    "live web data": "Live web data",
+    "demo data": "Preset report",
+    "mock data": "Local fallback",
+  };
 
   return (
     <span className={`rounded-lg border px-2.5 py-1 text-xs font-bold ${styles[source]}`}>
-      {source}
+      {labels[source]}
     </span>
   );
 }

@@ -33,7 +33,8 @@ export function GTMGenerator({ mode = "full" }: { mode?: "full" | "demo" }) {
   }
 
   function loadDemo(key: DemoKey) {
-    const demo = demoInputs[key];
+    const demo =
+      mode === "demo" ? demoInputs[key] : { ...demoInputs[key], dataMode: undefined };
     setInput(demo);
     setSubmitted(true);
     void generate(demo);

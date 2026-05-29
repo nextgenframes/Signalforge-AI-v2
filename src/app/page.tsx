@@ -105,8 +105,8 @@ export default function Home() {
       </section>
 
       <footer className="mt-8 rounded-lg border border-slate-800 bg-slate-950/90 p-5 text-center text-sm font-semibold text-slate-500">
-        SignalForge GTM hackathon demo. Live web data when keys are connected,
-        demo-safe mock mode when not.
+        SignalForge GTM. Live web data when keys are connected, local fallback
+        mode when not.
       </footer>
     </AppShell>
   );

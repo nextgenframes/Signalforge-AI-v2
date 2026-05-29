@@ -1,4 +1,5 @@
 import { AppShell } from "@/components/app-shell";
+import { LaunchInsights } from "@/components/launch-insights";
 import { LaunchContextPanel } from "@/components/launch-state";
 
 const sequences = [
@@ -26,6 +27,7 @@ export default function OutreachPage() {
       <div className="space-y-6">
         <Header />
         <LaunchContextPanel label="Outreach loaded for" />
+        <LaunchInsights mode="outreach" />
 
         <div className="grid gap-4 md:grid-cols-4">
           {metrics.map(([label, value]) => (

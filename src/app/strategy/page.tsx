@@ -1,4 +1,5 @@
 import { AppShell } from "@/components/app-shell";
+import { LaunchInsights } from "@/components/launch-insights";
 import { LaunchContextPanel } from "@/components/launch-state";
 
 const priorities = [
@@ -27,6 +28,7 @@ export default function StrategyPage() {
       <div className="space-y-6">
         <Header />
         <LaunchContextPanel label="Strategy built for" />
+        <LaunchInsights mode="strategy" />
 
         <section className="grid gap-4 lg:grid-cols-4">
           {priorities.map(([title, body]) => (

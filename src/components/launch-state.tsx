@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-type LaunchProfile = {
+export type LaunchProfile = {
   idea: string;
   industry: string;
   location: string;
@@ -42,7 +42,9 @@ export function LaunchInput() {
 
   function launch() {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
-    window.dispatchEvent(new Event("signalforge-launch"));
+    window.dispatchEvent(
+      new CustomEvent("signalforge-launch", { detail: profile }),
+    );
     setLaunched(true);
   }
 
@@ -108,7 +110,7 @@ export function LaunchInput() {
             onClick={launch}
             className="self-end rounded-lg bg-cyan-300 px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-cyan-200"
           >
-            Launch
+            Launch GTM agent
           </button>
         </div>
       </div>
@@ -117,21 +119,7 @@ export function LaunchInput() {
 }
 
 export function LaunchContextPanel({ label = "Loaded launch" }: { label?: string }) {
-  const [profile, setProfile] = useState<LaunchProfile | null>(null);
-
-  useEffect(() => {
-    function sync() {
-      setProfile(readLaunchProfile());
-    }
-
-    sync();
-    window.addEventListener("storage", sync);
-    window.addEventListener("signalforge-launch", sync);
-    return () => {
-      window.removeEventListener("storage", sync);
-      window.removeEventListener("signalforge-launch", sync);
-    };
-  }, []);
+  const profile = useLaunchProfile();
 
   if (!profile) {
     return (
@@ -163,7 +151,28 @@ export function LaunchContextPanel({ label = "Loaded launch" }: { label?: string
   );
 }
 
-function readLaunchProfile() {
+export function useLaunchProfile() {
+  const [profile, setProfile] = useState<LaunchProfile | null>(null);
+
+  useEffect(() => {
+    function sync(event?: Event) {
+      const launchEvent = event as CustomEvent<LaunchProfile>;
+      setProfile(launchEvent?.detail || readLaunchProfile());
+    }
+
+    sync();
+    window.addEventListener("storage", sync);
+    window.addEventListener("signalforge-launch", sync);
+    return () => {
+      window.removeEventListener("storage", sync);
+      window.removeEventListener("signalforge-launch", sync);
+    };
+  }, []);
+
+  return profile;
+}
+
+export function readLaunchProfile() {
   if (typeof window === "undefined") return null;
 
   try {

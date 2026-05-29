@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 
 const nav = [
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/", label: "GTM Scan" },
   { href: "/strategy", label: "Strategy" },
   { href: "/lead-explorer", label: "Lead Explorer" },
   { href: "/outreach", label: "Outreach" },
   { href: "/campaigns", label: "Campaigns" },
-  { href: "/", label: "GTM Scan" },
   { href: "/demo", label: "Demo Mode" },
   { href: "/settings", label: "Settings" },
 ];

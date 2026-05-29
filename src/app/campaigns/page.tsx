@@ -1,4 +1,5 @@
 import { AppShell } from "@/components/app-shell";
+import { LaunchInsights } from "@/components/launch-insights";
 import { LaunchContextPanel } from "@/components/launch-state";
 
 const campaigns = [
@@ -13,6 +14,7 @@ export default function CampaignsPage() {
       <div className="space-y-6">
         <Header title="Campaigns" subtitle="Launch experiments and channel tests." />
         <LaunchContextPanel label="Campaigns loaded for" />
+        <LaunchInsights mode="campaigns" />
         <div className="grid gap-4 lg:grid-cols-3">
           {campaigns.map(([name, type, status, progress]) => (
             <section key={name} className="rounded-lg border border-slate-800 bg-slate-950/90 p-5">
