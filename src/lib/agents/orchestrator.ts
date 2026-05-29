@@ -43,17 +43,17 @@ export async function runGTMOrchestrator(
     ]),
     score: score.score,
     icp: [
-      ...icp.segments.slice(0, 2),
-      `Trigger: ${icp.buyingTriggers[0].toLowerCase()}`,
+      ...safeStringList(icp.segments).slice(0, 2),
+      `Trigger: ${safeStringList(icp.buyingTriggers)[0].toLowerCase()}`,
     ],
-    competitors: competitorIntel.competitors,
+    competitors: safeCompetitors(competitorIntel.competitors),
     valueProposition: `${normalized.idea} helps ${normalized.location} customers get a clearer outcome faster by combining AI-assisted research, practical execution, and simple next steps.`,
-    pricing: pricing.packages,
-    distribution: distribution.channels,
-    launchPlan: launchPlan.plan,
+    pricing: safeStringList(pricing.packages),
+    distribution: safeStringList(distribution.channels),
+    launchPlan: safeStringList(launchPlan.plan),
     signals: [
-      ...marketDiscovery.demandSignals.slice(0, 2),
-      ...competitorIntel.whitespace.slice(0, 1),
+      ...safeStringList(marketDiscovery.demandSignals).slice(0, 2),
+      ...safeStringList(competitorIntel.whitespace).slice(0, 1),
     ],
     agents: {
       marketDiscovery,
@@ -83,4 +83,44 @@ function resolveReportSource(sources: FullGTMReport["dataSource"][]) {
   if (sources.includes("live web data")) return "live web data";
   if (sources.includes("demo data")) return "demo data";
   return "mock data";
+}
+
+function safeStringList(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    const items = value
+      .map((item) => (typeof item === "string" ? item : JSON.stringify(item)))
+      .filter(Boolean);
+    if (items.length > 0) return items;
+  }
+
+  if (typeof value === "string" && value.trim()) return [value.trim()];
+  return ["Review market signal and choose the next best launch action."];
+}
+
+function safeCompetitors(value: unknown) {
+  if (!Array.isArray(value)) {
+    return [
+      {
+        name: "Local incumbent",
+        position: "Known provider in the target category",
+        gap: "Win with sharper offer, faster response, and clearer proof.",
+      },
+    ];
+  }
+
+  return value
+    .map((item) => {
+      const competitor = item as Partial<{
+        name: string;
+        position: string;
+        gap: string;
+      }>;
+
+      return {
+        name: competitor.name || "Competitor",
+        position: competitor.position || "Market alternative",
+        gap: competitor.gap || "Differentiate with proof, speed, and niche focus.",
+      };
+    })
+    .slice(0, 5);
 }

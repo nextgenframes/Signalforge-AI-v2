@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
 import { LaunchInput } from "@/components/launch-state";
-import { runGTMOrchestrator } from "@/lib/agents/orchestrator";
-import { demoInputs, type GTMReport } from "@/lib/gtm-data";
+import { demoInputs, generateReport, type GTMReport } from "@/lib/gtm-data";
 
-export default async function DashboardPage() {
-  const report = await runGTMOrchestrator(demoInputs["HVAC Company"]);
+export default function DashboardPage() {
+  const report = generateReport(demoInputs["HVAC Company"]);
   const completedActions = 3;
   const totalActions = report.launchPlan.length;
 
