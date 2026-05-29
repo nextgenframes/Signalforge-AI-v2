@@ -1,65 +1,113 @@
-import Image from "next/image";
+import Link from "next/link";
+import { AppShell } from "@/components/app-shell";
+import { GTMGenerator } from "@/components/gtm-generator";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <AppShell>
+      <section className="mb-8 overflow-hidden rounded-lg border border-slate-800 bg-slate-950 text-white shadow-xl shadow-black/20">
+        <div className="grid gap-8 p-6 lg:grid-cols-[1fr_420px] lg:p-10">
+          <div>
+            <div className="flex flex-wrap gap-2">
+              {["Live web intelligence", "AI GTM agents", "Hackathon ready"].map(
+                (item) => (
+                  <span
+                    key={item}
+                    className="rounded-lg border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-bold text-cyan-100"
+                  >
+                    {item}
+                  </span>
+                ),
+              )}
+            </div>
+            <h1 className="mt-6 max-w-4xl text-4xl font-bold sm:text-6xl">
+              Launch smarter with AI-powered GTM intelligence.
+            </h1>
+            <p className="mt-5 max-w-3xl text-base leading-7 text-slate-300">
+              SignalForge GTM helps small businesses launch smarter by turning
+              live web data into ICPs, competitor insights, pricing strategy,
+              and launch plans.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <a
+                href="#gtm-scan"
+                className="rounded-lg bg-cyan-300 px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-cyan-200"
+              >
+                Start GTM Scan
+              </a>
+              <Link
+                href="/demo"
+                className="rounded-lg border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white transition hover:bg-white/15"
+              >
+                Demo Mode
+              </Link>
+            </div>
+          </div>
+          <aside className="rounded-lg border border-white/10 bg-white/10 p-5">
+            <p className="text-xs font-bold uppercase text-cyan-200">
+              Agent output
+            </p>
+            <div className="mt-5 space-y-4">
+              {[
+                ["ICP", "Buyer segments + triggers"],
+                ["Competitors", "SERP gaps + pricing signals"],
+                ["Launch", "30 day action plan"],
+              ].map(([label, value], index) => (
+                <div key={label} className="rounded-lg bg-white/10 p-4">
+                  <div className="flex items-center justify-between">
+                    <p className="font-bold">{label}</p>
+                    <p className="text-xs font-bold text-lime-200">
+                      {80 + index * 5}%
+                    </p>
+                  </div>
+                  <p className="mt-2 text-sm text-slate-300">{value}</p>
+                  <div className="mt-3 h-2 overflow-hidden rounded-lg bg-white/10">
+                    <div
+                      className="h-full rounded-lg bg-gradient-to-r from-cyan-300 to-lime-300"
+                      style={{ width: `${80 + index * 5}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </aside>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <section id="gtm-scan" className="scroll-mt-24">
+      <GTMGenerator />
+      </section>
+
+      <section className="mt-8 rounded-lg border border-slate-800 bg-slate-950/90 p-6 shadow-sm">
+        <div className="mb-5">
+          <p className="text-sm font-bold text-cyan-300">Tech stack</p>
+          <h2 className="mt-2 text-2xl font-bold text-slate-100">
+            Built for live market intelligence
+          </h2>
         </div>
-      </main>
-    </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            "Bright Data SERP API",
+            "Bright Data Web Scraper API",
+            "Bright Data Scraping Browser",
+            "Bright Data MCP Server",
+            "AIMLAPI",
+            "Next.js",
+          ].map((item) => (
+            <div
+              key={item}
+              className="rounded-lg border border-slate-800 bg-slate-900/70 p-4 text-sm font-bold text-slate-300"
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <footer className="mt-8 rounded-lg border border-slate-800 bg-slate-950/90 p-5 text-center text-sm font-semibold text-slate-500">
+        SignalForge GTM hackathon demo. Live web data when keys are connected,
+        demo-safe mock mode when not.
+      </footer>
+    </AppShell>
   );
 }
