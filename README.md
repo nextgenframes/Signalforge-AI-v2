@@ -1,36 +1,136 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SignalForge GTM
 
-## Getting Started
+SignalForge GTM is a hackathon demo app that helps small businesses launch smarter by turning live web data into ICPs, competitor insights, pricing strategy, distribution strategy, and 30 day launch plans.
 
-First, run the development server:
+## Hackathon Track
+
+Built for an AI + live web intelligence hackathon track. The product shows how AI agents can combine search results, scraped competitor pages, pricing signals, and LLM reasoning into a practical go-to-market plan for a small business.
+
+## What It Does
+
+- Accepts a business idea, industry, location, website, budget, and business type.
+- Discovers competitors and market signals.
+- Generates ICP, positioning, pricing, distribution, launch plan, and GTM readiness score.
+- Shows whether each report uses live web data, demo data, or mock data.
+- Includes a judge-friendly demo mode with five preset businesses.
+
+## Bright Data Usage
+
+SignalForge uses Bright Data as the web intelligence layer:
+
+- Bright Data SERP API: competitor discovery, SERP ranking, market demand signals.
+- Bright Data Web Scraper API: competitor page scraping and pricing research.
+- Bright Data Scraping Browser: dynamic website checks for client-rendered pages.
+- Bright Data MCP Server: planned operator layer for deeper live research workflows.
+
+If Bright Data env vars are missing, the app falls back to demo/mock data so presentations still work.
+
+## AIMLAPI Usage
+
+AIMLAPI powers the AI reasoning layer through an OpenAI-compatible chat completions API. Agents use it to generate structured JSON for:
+
+- ICP
+- Positioning and value proposition
+- Pricing strategy
+- Distribution strategy
+- 30 day launch plan
+- GTM readiness score
+
+If `AIMLAPI_KEY` is missing or a request fails, local mock responses keep the app usable.
+
+## Run Locally
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Create env file:
+
+```bash
+cp .env.example .env.local
+```
+
+3. Add keys if available:
+
+```bash
+AIMLAPI_KEY=...
+AIMLAPI_MODEL=gpt-4o-mini
+BRIGHT_DATA_API_KEY=...
+BRIGHT_DATA_SERP_ZONE=...
+BRIGHT_DATA_SCRAPER_ZONE=...
+BRIGHT_DATA_BROWSER_ZONE=...
+```
+
+4. Start dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+[http://localhost:3000](http://localhost:3000)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Demo Mode
 
-## Learn More
+Open [http://localhost:3000/demo](http://localhost:3000/demo).
 
-To learn more about Next.js, take a look at the following resources:
+Preset businesses:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- AI Resume Tool
+- Mobile Car Wash
+- Local Coffee Shop
+- HVAC Company
+- Fitness App
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Selecting a preset instantly displays a complete GTM report and a behind-the-scenes panel showing how Bright Data and AIMLAPI would run in live mode.
 
-## Deploy on Vercel
+## API Routes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`POST /api/gtm`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Internal app route. Accepts `BusinessProfile` and returns the full report shape used by the UI.
+
+`POST /api/generate-gtm`
+
+External-friendly route. Input:
+
+```json
+{
+  "businessIdea": "Mobile car wash",
+  "industry": "Auto services",
+  "location": "Phoenix, AZ",
+  "website": "",
+  "budget": "$4,000",
+  "businessType": "Local service"
+}
+```
+
+Returns:
+
+```json
+{
+  "profile": {},
+  "marketDiscovery": {},
+  "icp": {},
+  "competitors": [],
+  "valueProposition": "",
+  "pricing": {},
+  "distribution": {},
+  "launchPlan": {},
+  "gtmScore": {},
+  "dataSource": "demo data"
+}
+```
+
+## Scripts
+
+```bash
+npm run dev
+npm run lint
+npm run build
+npm run start
+```
+# Signalforge-AI-v2
