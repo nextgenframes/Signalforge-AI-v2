@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 
 const keys = [
   {
-    name: "AIMLAPI_KEY",
-    label: "AIMLAPI",
-    purpose: "Agent reasoning and structured JSON generation",
+    name: "FEATHERLESS_API_KEY",
+    label: "Featherless AI",
+    purpose: "Agent reasoning and structured JSON generation (DeepSeek-V3-0324)",
   },
   {
-    name: "AIMLAPI_MODEL",
-    label: "AIMLAPI model",
-    purpose: "Default model override",
+    name: "FEATHERLESS_MODEL",
+    label: "Featherless model override",
+    purpose: "Optional model override (default: deepseek-ai/DeepSeek-V3-0324)",
   },
   {
     name: "BRIGHT_DATA_API_KEY",

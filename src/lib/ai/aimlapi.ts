@@ -4,7 +4,7 @@ type GenerateAIResponseInput = {
   model?: string;
 };
 
-type AIMLAPIResponse = {
+type FeatherlessResponse = {
   choices?: Array<{
     message?: {
       content?: string;
@@ -12,26 +12,26 @@ type AIMLAPIResponse = {
   }>;
 };
 
-const AIMLAPI_BASE_URL = "https://api.aimlapi.com/v1";
-const FALLBACK_MODEL = "gpt-4o-mini";
+const FEATHERLESS_BASE_URL = "https://api.featherless.ai/v1";
+const DEFAULT_MODEL = "deepseek-ai/DeepSeek-V3-0324";
 
 export async function generateAIResponse({
   systemPrompt,
   userPrompt,
   model,
 }: GenerateAIResponseInput) {
-  const apiKey = process.env.AIMLAPI_KEY;
-  const selectedModel = model || process.env.AIMLAPI_MODEL || FALLBACK_MODEL;
+  const apiKey = process.env.FEATHERLESS_API_KEY;
+  const selectedModel = model || process.env.FEATHERLESS_MODEL || DEFAULT_MODEL;
 
   if (!apiKey) {
     return JSON.stringify({
       mock: true,
-      reason: "AIMLAPI_KEY missing. Local mock response used.",
+      reason: "FEATHERLESS_API_KEY missing. Local mock response used.",
     });
   }
 
   try {
-    const response = await fetch(`${AIMLAPI_BASE_URL}/chat/completions`, {
+    const response = await fetch(`${FEATHERLESS_BASE_URL}/chat/completions`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -43,24 +43,24 @@ export async function generateAIResponse({
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
-        response_format: { type: "json_object" },
         temperature: 0.3,
       }),
     });
 
     if (!response.ok) {
+      const detail = await response.text().catch(() => response.status.toString());
       return JSON.stringify({
         mock: true,
-        reason: `AIMLAPI request failed: ${response.status}`,
+        reason: `Featherless request failed (${response.status}): ${detail}`,
       });
     }
 
-    const data = (await response.json()) as AIMLAPIResponse;
+    const data = (await response.json()) as FeatherlessResponse;
     return data.choices?.[0]?.message?.content ?? "{}";
-  } catch {
+  } catch (err) {
     return JSON.stringify({
       mock: true,
-      reason: "AIMLAPI request failed. Local mock response used.",
+      reason: `Featherless request error: ${err instanceof Error ? err.message : "unknown"}`,
     });
   }
 }
