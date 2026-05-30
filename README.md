@@ -1,102 +1,136 @@
 # SignalForge GTM
 
-SignalForge GTM is a hackathon demo app that helps small businesses launch smarter by turning live web data into ICPs, competitor insights, pricing strategy, distribution strategy, and 30 day launch plans.
+SignalForge GTM is an AI-powered go-to-market intelligence platform that helps entrepreneurs and small businesses launch smarter. It combines live web data from Bright Data with DeepSeek V3 reasoning (via Featherless AI) to produce personalized ICPs, competitor analysis, pricing strategy, outreach sequences, campaign plans, and 30-day launch plans.
 
-## Hackathon Track
+## Tech Stack
 
-Built for an AI + live web intelligence hackathon track. The product shows how AI agents can combine search results, scraped competitor pages, pricing signals, and LLM reasoning into a practical go-to-market plan for a small business.
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| AI model | DeepSeek V3-0324 via Featherless AI |
+| Web intelligence | Bright Data SERP API, Scraper API, Scraping Browser |
+| Styling | Tailwind CSS v4 |
+| Deployment | Vercel |
 
-## What It Does
+## Features
 
-- Accepts a business idea, industry, location, website, budget, and business type.
-- Discovers competitors and market signals.
-- Generates ICP, positioning, pricing, distribution, launch plan, and GTM readiness score.
-- Shows whether each report uses live web data, demo data, or mock data.
-- Includes a judge-friendly demo mode with five preset businesses.
+### GTM Scan (Home)
+- Input a business idea, industry, location, website, budget, and business type
+- Runs 7 parallel AI agents: MarketDiscovery, ICP, CompetitorIntel, Pricing, Distribution, LaunchPlan, GTMScore
+- Idea-specific competitor generation across 8 verticals (HVAC, resume tools, coffee, fitness, auto, dental, SaaS, restaurant)
+- Readiness score algorithm weighted across idea specificity, budget, location, website presence, and business type
+- Scan results persist in localStorage and restore on page refresh
+- Export report as Markdown or copy a shareable URL
 
-## Bright Data Usage
+### Dashboard
+- Reads your last GTM scan result automatically — no re-running needed
+- Agent pipeline replay animation showing all 7 agents
+- ICP summary, value proposition, competitor cards, pricing, distribution channels, and market signals
+- 30-day launch plan with progress tracking
 
-SignalForge uses Bright Data as the web intelligence layer:
+### Strategy
+- Personalized positioning statement and beachhead market definition
+- 4 strategic priorities with tags (ICP, Timing, Messaging, Proof)
+- 5-channel strategy with priority tiers (High / Medium / Test) and specific plays
+- 3-tier pricing ladder with inclusions and "best for" guidance
+- 4-phase 90-day GTM roadmap with actions and milestones
+- 6 KPIs with targets and review cadence
+- 4 risks with specific mitigations
+- Decision rules to prevent common launch mistakes
 
-- Bright Data SERP API: competitor discovery, SERP ranking, market demand signals.
-- Bright Data Web Scraper API: competitor page scraping and pricing research.
-- Bright Data Scraping Browser: dynamic website checks for client-rendered pages.
-- Bright Data MCP Server: planned operator layer for deeper live research workflows.
+### Outreach
+- 6 outreach metrics (accounts/week, reply rate, meetings booked, etc.)
+- 3 ICP-matched target segments with buying signals, data sources, and approach
+- 3–4 touch outreach sequence with actual ready-to-send copy
+- 4 objection-handling scripts
+- Personalization tokens specific to the business type
+- Outreach rules to maintain reply rate
 
-If Bright Data env vars are missing, the app falls back to demo/mock data so presentations still work.
+### Campaigns
+- 5 tailored campaigns per business type (local / SaaS / consumer)
+- Each campaign: goal, channel, copy angle, budget split, success metric, next action
+- Live / Ready / Draft status tracking
+- Campaign principles for disciplined execution
 
-## AIMLAPI Usage
+### Lead Explorer
+- ICP-matched company discovery with filters (industry, size, location, keywords, funding)
+- Full intel cards per lead: buying signal, ICP fit rationale, trigger event, decision maker, outreach angle
+- "Full intel" expand/collapse toggle per card
+- Domain links open the company website directly
+- Filters initialise from your launch profile — changing any filter starts from your business values, not defaults
+- Search across all lead fields
 
-AIMLAPI powers the AI reasoning layer through an OpenAI-compatible chat completions API. Agents use it to generate structured JSON for:
+### Demo Mode
+- 5 preset businesses: AI Resume Tool, Mobile Car Wash, Local Coffee Shop, HVAC Company, Fitness App
+- Instant GTM report without API calls
+- Agent pipeline replay showing Bright Data + DeepSeek V3 steps
+- Full report with export and share
 
-- ICP
-- Positioning and value proposition
-- Pricing strategy
-- Distribution strategy
-- 30 day launch plan
-- GTM readiness score
+### Settings
+- API key status panel (Featherless AI + all Bright Data zones)
+- Live vs. fallback mode indicator
+- Saved data panel: view and clear stored scan or launch profile
+- Explanation of Live / Fallback / Demo data modes
 
-If `AIMLAPI_KEY` is missing or a request fails, local mock responses keep the app usable.
+## Data Modes
+
+| Mode | When active | What happens |
+|---|---|---|
+| **Live** | All API keys configured | Bright Data fetches real SERP + competitor pages; DeepSeek V3 synthesizes findings |
+| **Fallback** | Keys missing or request fails | Content generated locally from business inputs using market archetypes and heuristics |
+| **Demo** | Demo mode tab | Preset business profiles with pre-built reports; no API calls |
+
+## AI Agent Pipeline
+
+All agents run in parallel via `runGTMOrchestrator`:
+
+1. **MarketDiscoveryAgent** — searches category, local intent, and demand signals
+2. **ICPAgent** — builds buyer segments, pains, and triggers
+3. **CompetitorIntelAgent** — finds real competitors via SERP (filters directories like Angi, Yelp, G2), enriched by DeepSeek V3
+4. **PricingAgent** — benchmarks packages and offer ladder
+5. **DistributionAgent** — ranks channels by intent and budget fit
+6. **LaunchPlanAgent** — creates 30-day execution plan
+7. **GTMScoreAgent** — checks readiness and next best action
 
 ## Run Locally
 
-1. Install dependencies:
-
 ```bash
 npm install
-```
-
-2. Create env file:
-
-```bash
-cp .env.example .env.local
-```
-
-3. Add keys if available:
-
-```bash
-AIMLAPI_KEY=...
-AIMLAPI_MODEL=gpt-4o-mini
-BRIGHT_DATA_API_KEY=...
-BRIGHT_DATA_SERP_ZONE=...
-BRIGHT_DATA_SCRAPER_ZONE=...
-BRIGHT_DATA_BROWSER_ZONE=...
-```
-
-4. Start dev server:
-
-```bash
+cp .env.example .env
+# Add your keys to .env
 npm run dev
 ```
 
-5. Open:
+Open [http://localhost:3000](http://localhost:3000)
 
-[http://localhost:3000](http://localhost:3000)
+## Environment Variables
 
-## Demo Mode
+```bash
+# Required for AI synthesis
+FEATHERLESS_API_KEY=your_key_here
 
-Open [http://localhost:3000/demo](http://localhost:3000/demo).
+# Optional model override (default: deepseek-ai/DeepSeek-V3-0324)
+# FEATHERLESS_MODEL=deepseek-ai/DeepSeek-V3-0324
 
-Preset businesses:
+# Required for live web intelligence
+BRIGHT_DATA_API_KEY=your_key_here
+BRIGHT_DATA_SERP_ZONE=your_zone
+BRIGHT_DATA_SCRAPER_ZONE=your_zone
+BRIGHT_DATA_BROWSER_ZONE=your_zone
+```
 
-- AI Resume Tool
-- Mobile Car Wash
-- Local Coffee Shop
-- HVAC Company
-- Fitness App
-
-Selecting a preset instantly displays a complete GTM report and a behind-the-scenes panel showing how Bright Data and AIMLAPI would run in live mode.
+Get your Featherless AI key at [featherless.ai](https://featherless.ai).
+Get your Bright Data keys at [brightdata.com](https://brightdata.com).
 
 ## API Routes
 
-`POST /api/gtm`
+### `POST /api/gtm`
+Internal route used by the GTM scan UI. Accepts `BusinessProfile`, returns `FullGTMReport`.
 
-Internal app route. Accepts `BusinessProfile` and returns the full report shape used by the UI.
+### `POST /api/generate-gtm`
+External-friendly route with Bright Data competitor scraping included.
 
-`POST /api/generate-gtm`
-
-External-friendly route. Input:
-
+**Input:**
 ```json
 {
   "businessIdea": "Mobile car wash",
@@ -108,29 +142,16 @@ External-friendly route. Input:
 }
 ```
 
-Returns:
+**Returns:** profile, marketDiscovery (with scraped competitor pages), icp, competitors, valueProposition, pricing, distribution, launchPlan, gtmScore, dataSource.
 
-```json
-{
-  "profile": {},
-  "marketDiscovery": {},
-  "icp": {},
-  "competitors": [],
-  "valueProposition": "",
-  "pricing": {},
-  "distribution": {},
-  "launchPlan": {},
-  "gtmScore": {},
-  "dataSource": "demo data"
-}
-```
+### `GET /api/key-status`
+Returns configuration status of all API keys (values hidden, boolean only).
 
 ## Scripts
 
 ```bash
-npm run dev
-npm run lint
-npm run build
-npm run start
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run start    # Start production server
+npm run lint     # Run ESLint
 ```
-# Signalforge-AI-v2
