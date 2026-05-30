@@ -7,6 +7,7 @@ import {
   generateReport,
   type BusinessInput,
   type DemoKey,
+  type GTMReport,
 } from "@/lib/gtm-data";
 import { ReportView } from "@/components/report-view";
 
@@ -17,13 +18,28 @@ export function GTMGenerator({ mode = "full" }: { mode?: "full" | "demo" }) {
   const [input, setInput] = useState<BusinessInput>(firstDemo);
   const [submitted, setSubmitted] = useState(mode === "demo");
   const [loading, setLoading] = useState(false);
-  const [report, setReport] = useState(() =>
+  const [report, setReport] = useState<GTMReport | null>(() =>
     mode === "demo" ? generateReport(firstDemo) : null,
   );
 
   useEffect(() => {
     if (mode === "demo") {
       void generate(firstDemo);
+      return;
+    }
+    // Restore last scan from localStorage on mount
+    try {
+      const raw = window.localStorage.getItem("signalforge.lastScan");
+      if (raw) {
+        const stored = JSON.parse(raw) as { input: BusinessInput; report: GTMReport; savedAt: string };
+        if (stored.input?.idea) {
+          setInput(stored.input);
+          setReport(stored.report);
+          setSubmitted(true);
+        }
+      }
+    } catch {
+      // ignore
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
@@ -53,13 +69,30 @@ export function GTMGenerator({ mode = "full" }: { mode?: "full" | "demo" }) {
         throw new Error("GTM API failed");
       }
 
-      setReport(await response.json());
+      const data = (await response.json()) as GTMReport;
+      setReport(data);
+      window.localStorage.setItem(
+        "signalforge.lastScan",
+        JSON.stringify({ input: profile, report: data, savedAt: new Date().toISOString() }),
+      );
     } catch {
-      setReport(generateReport(profile));
+      const fallback = generateReport(profile);
+      setReport(fallback);
+      window.localStorage.setItem(
+        "signalforge.lastScan",
+        JSON.stringify({ input: profile, report: fallback, savedAt: new Date().toISOString() }),
+      );
     } finally {
       setSubmitted(true);
       setLoading(false);
     }
+  }
+
+  function clearScan() {
+    window.localStorage.removeItem("signalforge.lastScan");
+    setInput(blankInput);
+    setReport(null);
+    setSubmitted(false);
   }
 
   return (
@@ -147,13 +180,24 @@ export function GTMGenerator({ mode = "full" }: { mode?: "full" | "demo" }) {
               </select>
             </Field>
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-cyan-300 px-5 py-4 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-950/20 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
-          >
-            {loading ? "Generating..." : "Generate GTM report"}
-          </button>
+          <div className="flex items-center justify-between gap-3">
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 rounded-lg bg-cyan-300 px-5 py-4 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-950/20 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+            >
+              {loading ? "Generating..." : "Generate GTM report"}
+            </button>
+            {submitted && report ? (
+              <button
+                type="button"
+                onClick={clearScan}
+                className="text-xs font-semibold text-slate-500 underline transition hover:text-red-400"
+              >
+                Clear scan
+              </button>
+            ) : null}
+          </div>
         </form>
       </aside>
 

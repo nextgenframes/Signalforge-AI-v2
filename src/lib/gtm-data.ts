@@ -89,7 +89,7 @@ export function generateReport(input: BusinessInput): GTMReport {
   const budget = input.budget || "starter budget";
   const score = scoreInput(input);
   const source = input.dataMode === "demo" ? "demo data" : "mock data";
-  const competitors = pickCompetitors(input);
+  const competitors = generateCompetitors(input);
   const icp = [
     `Primary buyer: people or teams in ${location} with urgent ${industry.toLowerCase()} need.`,
     "Best early segment: buyers who value speed, trust, and done-for-you guidance over lowest price.",
@@ -220,84 +220,128 @@ export function generateReport(input: BusinessInput): GTMReport {
   };
 }
 
-const competitorSets: Record<string, Competitor[]> = {
-  software: [
-    {
-      name: "Teal",
-      position: "Career workflow platform",
-      gap: "Powerful, but broad. Win with speed, niche templates, and lower setup time.",
-    },
-    {
-      name: "Resume.io",
-      position: "Resume builder",
-      gap: "Template-led. Win with personalized rewrites tied to target jobs.",
-    },
-    {
-      name: "Kickresume",
-      position: "AI resume and cover letter suite",
-      gap: "Feature-heavy. Win with guided outcomes and clearer ROI.",
-    },
-  ],
-  local: [
-    {
-      name: "Top-ranked local incumbent",
-      position: "Strong Google Maps presence",
-      gap: "Win with faster response, proof, and focused landing pages.",
-    },
-    {
-      name: "Budget operator",
-      position: "Low-price competitor",
-      gap: "Avoid price war. Package trust, convenience, and guarantee.",
-    },
-    {
-      name: "Franchise brand",
-      position: "Known name, slower personalization",
-      gap: "Win with neighborhood specificity and owner-led service.",
-    },
-  ],
-  consumer: [
-    {
-      name: "Category leader",
-      position: "Large brand with broad audience",
-      gap: "Win with sharper persona and community-driven content.",
-    },
-    {
-      name: "Creator-led niche brand",
-      position: "Strong organic trust",
-      gap: "Win with product consistency and better onboarding.",
-    },
-    {
-      name: "Low-cost alternative",
-      position: "Discount positioning",
-      gap: "Win with outcomes, retention, and premium support.",
-    },
-  ],
-};
+function generateCompetitors(input: BusinessInput): Competitor[] {
+  const text = `${input.idea} ${input.industry} ${input.type}`.toLowerCase();
 
-function pickCompetitors(input: BusinessInput) {
-  const text = `${input.industry} ${input.type}`.toLowerCase();
-  if (text.includes("saas") || text.includes("software") || text.includes("app")) {
-    return competitorSets.software;
+  if (/resume|career|job|cv/.test(text)) {
+    return [
+      { name: "Teal", position: "Career workflow platform", gap: "Win with speed and niche templates." },
+      { name: "Resume.io", position: "Template builder", gap: "Win with AI-personalized rewrites." },
+      { name: "Kickresume", position: "AI resume and cover letter suite", gap: "Win with guided outcomes and ROI clarity." },
+      { name: "Rezi", position: "ATS optimization focus", gap: "Win with job-match specificity." },
+    ];
   }
-  if (
-    text.includes("local") ||
-    text.includes("service") ||
-    text.includes("hvac") ||
-    text.includes("auto") ||
-    text.includes("coffee")
-  ) {
-    return competitorSets.local;
+
+  if (/hvac|heat|cool|furnace|air conditioning/.test(text)) {
+    return [
+      { name: "ServiceTitan", position: "Enterprise field service", gap: "Win with simplicity and local speed." },
+      { name: "Housecall Pro", position: "Mid-market FSM", gap: "Win with same-day booking and trust signals." },
+      { name: "Thumbtack", position: "Marketplace model", gap: "Win with direct relationship and guarantee." },
+      { name: "Google LSA", position: "Pay-per-lead, no differentiation", gap: "Win with owned brand presence." },
+    ];
   }
-  return competitorSets.consumer;
+
+  if (/coffee|cafe|roast|brew|espresso/.test(text)) {
+    return [
+      { name: "Toast", position: "Restaurant POS", gap: "Win with cafe-specific simplicity." },
+      { name: "Square for Restaurants", position: "Generic POS", gap: "Win with community and subscription features." },
+      { name: "Clover", position: "Hardware-first POS", gap: "Win with digital-native experience." },
+      { name: "Lightspeed", position: "Enterprise focus", gap: "Win with indie operator pricing and support." },
+    ];
+  }
+
+  if (/fitness|gym|workout|strength|coach/.test(text)) {
+    return [
+      { name: "Mindbody", position: "Bloated and expensive", gap: "Win with simplicity and mobile-first UX." },
+      { name: "Trainerize", position: "Trainer-focused platform", gap: "Win with adaptive AI programming." },
+      { name: "Fitbod", position: "Algorithm-driven app", gap: "Win with human coaching layer." },
+      { name: "MyFitnessPal", position: "Tracking-only app", gap: "Win with full coaching and accountability." },
+    ];
+  }
+
+  if (/car wash|auto|vehicle|detail|mechanic/.test(text)) {
+    return [
+      { name: "DRB Systems", position: "Legacy enterprise", gap: "Win with modern UX and fast setup." },
+      { name: "Washify", position: "Subscription wash platform", gap: "Win with fleet and B2B focus." },
+      { name: "Spiffy", position: "On-demand model", gap: "Win with location flexibility." },
+      { name: "AutoLeap", position: "Shop management software", gap: "Win with customer-facing booking experience." },
+    ];
+  }
+
+  if (/dental|clinic|patient|medical|therapy/.test(text)) {
+    return [
+      { name: "Dentrix", position: "Complex enterprise", gap: "Win with modern UX and patient communication." },
+      { name: "Carestream", position: "Imaging-focused platform", gap: "Win with full practice workflow." },
+      { name: "Weave", position: "Communication tool", gap: "Win with integrated scheduling and intake." },
+      { name: "SimplePractice", position: "Therapy-focused platform", gap: "Win with dental/medical specialization." },
+    ];
+  }
+
+  if (/saas|software|platform|api|developer/.test(text)) {
+    return [
+      { name: "Notion", position: "Horizontal tool", gap: "Win with vertical-specific workflows." },
+      { name: "Monday.com", position: "Project mgmt framing", gap: "Win with GTM-specific use case." },
+      { name: "Airtable", position: "Database framing", gap: "Win with opinionated structure for the use case." },
+      { name: "Zapier", position: "Integration layer only", gap: "Win with end-to-end workflow ownership." },
+    ];
+  }
+
+  if (/restaurant|food|delivery|menu/.test(text)) {
+    return [
+      { name: "Toast", position: "Dominant but expensive", gap: "Win with zero-commission delivery and indie pricing." },
+      { name: "Square", position: "Generic POS", gap: "Win with restaurant-specific marketing features." },
+      { name: "Olo", position: "Enterprise delivery platform", gap: "Win with direct ordering and owner economics." },
+      { name: "Popmenu", position: "Website-focused platform", gap: "Win with full revenue ops suite." },
+    ];
+  }
+
+  // Default fallback
+  return [
+    { name: "HubSpot", position: "CRM behemoth", gap: "Win with speed-to-value and vertical specificity." },
+    { name: "Apollo.io", position: "Data platform", gap: "Win with workflow automation and AI synthesis." },
+    { name: "Salesforce", position: "Enterprise complexity", gap: "Win with founder-friendly setup and clear ROI." },
+    { name: "Clay", position: "Technical users only", gap: "Win with no-code accessibility." },
+  ];
 }
 
 function scoreInput(input: BusinessInput) {
-  let score = 62;
-  if (input.idea.length > 18) score += 8;
-  if (input.industry) score += 7;
-  if (input.location) score += 6;
+  let score = 50;
+
+  // Idea quality
+  if (input.idea.length > 30) score += 8;
+  if (input.idea.length > 60) score += 4;
+  if (/\d/.test(input.idea)) score += 4;
+
+  // Industry
+  if (input.industry) score += 6;
+
+  // Location
+  if (input.location) {
+    score += 5;
+    if (/,|new york|los angeles|chicago|houston|phoenix|san antonio|san diego|dallas|san jose|austin|jacksonville|fort worth|columbus|charlotte|san francisco|seattle|denver|boston|nashville|portland/.test(input.location.toLowerCase())) {
+      score += 3;
+    }
+  }
+
+  // Website
   if (input.website) score += 5;
-  if (input.budget) score += 4;
-  if (input.type) score += 5;
-  return Math.min(score, 94);
+
+  // Budget
+  if (input.budget) {
+    score += 3;
+    const budgetNum = parseInt(input.budget.replace(/[^0-9]/g, ""), 10);
+    if (!isNaN(budgetNum)) {
+      if (budgetNum > 10000) score += 4;
+      if (budgetNum > 25000) score += 3;
+    }
+  }
+
+  // Business type
+  if (input.type) {
+    score += 4;
+    if (input.type === "SaaS") score += 2;
+    if (input.type === "Local service") score += 2;
+  }
+
+  return Math.max(50, Math.min(score, 97));
 }

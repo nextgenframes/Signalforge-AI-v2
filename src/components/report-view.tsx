@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import type { GTMReport } from "@/lib/gtm-data";
 
 function Card({
@@ -25,9 +28,92 @@ function Card({
   );
 }
 
+function buildMarkdown(report: GTMReport): string {
+  const lines: string[] = [
+    `# GTM Report: ${report.title}`,
+    "",
+    `**Readiness score**: ${report.score}/100`,
+    `**Data source**: ${report.dataSource}`,
+    "",
+    "## Summary",
+    report.summary,
+    "",
+    "## ICP",
+    ...report.icp.map((item) => `- ${item}`),
+    "",
+    "## Value Proposition",
+    report.valueProposition,
+    "",
+    "## Competitors",
+    ...report.competitors.map((c) => `- **${c.name}** — ${c.position} — ${c.gap}`),
+    "",
+    "## Pricing",
+    ...report.pricing.map((item) => `- ${item}`),
+    "",
+    "## Distribution Channels",
+    ...report.distribution.map((item) => `- ${item}`),
+    "",
+    "## 30-Day Launch Plan",
+    ...report.launchPlan.map((item, i) => `${i + 1}. ${item}`),
+    "",
+    "## Market Signals",
+    ...report.signals.map((item) => `- ${item}`),
+  ];
+  return lines.join("\n");
+}
+
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
+}
+
+function ExportToolbar({ report }: { report: GTMReport }) {
+  const [copied, setCopied] = useState(false);
+
+  function exportMarkdown() {
+    const md = buildMarkdown(report);
+    const blob = new Blob([md], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `gtm-report-${slugify(report.title)}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function copyShareLink() {
+    const url = window.location.origin + "/?idea=" + encodeURIComponent(report.title);
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {/* ignore */});
+  }
+
+  const btnClass =
+    "rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-bold text-slate-300 transition hover:text-slate-100";
+
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+      <p className="text-sm font-bold text-cyan-300">GTM Report</p>
+      <div className="flex items-center gap-2">
+        <button type="button" onClick={exportMarkdown} className={btnClass}>
+          Export Markdown
+        </button>
+        <button type="button" onClick={copyShareLink} className={btnClass}>
+          {copied ? "Copied!" : "Copy share link"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function ReportView({ report }: { report: GTMReport }) {
   return (
     <div className="space-y-5">
+      <ExportToolbar report={report} />
       <section className="rounded-lg border border-slate-800 bg-slate-950/90 p-6 shadow-sm">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div>

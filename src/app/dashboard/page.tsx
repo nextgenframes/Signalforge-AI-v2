@@ -1,31 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { AppShell } from "@/components/app-shell";
 import {
   LaunchInput,
   type LaunchProfile,
   useLaunchProfile,
 } from "@/components/launch-state";
-import { demoInputs, generateReport, type GTMReport } from "@/lib/gtm-data";
+import { demoInputs, generateReport, type BusinessInput, type GTMReport } from "@/lib/gtm-data";
 
 export default function DashboardPage() {
   const profile = useLaunchProfile();
-  const report = useMemo(() => {
-    if (!profile) {
-      return generateReport({ ...demoInputs["HVAC Company"], dataMode: "mock" });
-    }
+  const [report, setReport] = useState<GTMReport>(() => {
+    return generateReport({ ...demoInputs["HVAC Company"], dataMode: "mock" });
+  });
 
-    return generateReport({
-      idea: profile.idea,
-      industry: profile.industry,
-      location: profile.location,
-      website: "",
-      budget: profile.budget,
-      type: profile.businessType,
-      dataMode: "mock",
-    });
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("signalforge.lastScan");
+      if (raw) {
+        const stored = JSON.parse(raw) as { input: BusinessInput; report: GTMReport; savedAt: string };
+        if (stored.report && stored.input?.idea) {
+          setReport(stored.report);
+          return;
+        }
+      }
+    } catch {}
+    // fall back to profile-based or demo mock
+    const base = profile
+      ? { idea: profile.idea, industry: profile.industry, location: profile.location, website: "", budget: profile.budget, type: profile.businessType, dataMode: "mock" as const }
+      : { ...demoInputs["HVAC Company"], dataMode: "mock" as const };
+    setReport(generateReport(base));
   }, [profile]);
   const completedActions = 3;
   const totalActions = report.launchPlan.length;
@@ -62,6 +68,17 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
+          {report.dataSource === "mock data" ? (
+            <div className="border-t border-slate-800 px-5 py-3">
+              <p className="text-xs text-slate-500">
+                Showing mock data.{" "}
+                <Link href="/" className="underline hover:text-slate-300">
+                  Run a GTM scan on the home page
+                </Link>{" "}
+                to see your real report here.
+              </p>
+            </div>
+          ) : null}
         </section>
 
         <LaunchInput />
