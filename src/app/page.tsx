@@ -7,7 +7,7 @@ export default function Home() {
     <AppShell>
       <section className="mb-8 overflow-hidden rounded-lg border border-slate-800 bg-slate-950 text-white shadow-xl shadow-black/20">
         <div className="grid gap-8 p-6 lg:grid-cols-[1fr_420px] lg:p-10">
-          <div>
+          <div className="min-w-0">
             <div className="flex flex-wrap gap-2">
               {["Live web intelligence", "AI GTM agents", "Hackathon ready"].map(
                 (item) => (
@@ -20,7 +20,7 @@ export default function Home() {
                 ),
               )}
             </div>
-            <h1 className="mt-6 max-w-4xl text-4xl font-bold sm:text-6xl">
+            <h1 className="mt-6 max-w-4xl text-4xl font-bold sm:text-5xl xl:text-6xl">
               Launch smarter with AI-powered GTM intelligence.
             </h1>
             <p className="mt-5 max-w-3xl text-base leading-7 text-slate-300">

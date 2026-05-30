@@ -95,7 +95,7 @@ export function ReportView({ report }: { report: GTMReport }) {
       </div>
 
       <Card title="30 day launch plan">
-        <div className="grid gap-3 md:grid-cols-5">
+        <div className="grid gap-3 grid-cols-2 lg:grid-cols-5">
           {report.launchPlan.map((item, index) => (
             <div key={item} className="rounded-lg border border-slate-800 bg-slate-900/70 p-4 text-white">
               <p className="font-mono text-xs font-bold text-cyan-200">

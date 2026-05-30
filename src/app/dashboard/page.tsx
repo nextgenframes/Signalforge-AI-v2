@@ -389,7 +389,7 @@ function AgentPipeline({ profile }: { profile: LaunchProfile | null }) {
           {activeStep >= steps.length ? "Complete" : "Running"}
         </Badge>
       </div>
-      <div className="mt-5 grid gap-3 lg:grid-cols-7">
+      <div className="mt-5 grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
         {steps.map(([agent, action], index) => {
           const done = activeStep > index;
           const running = activeStep === index;
@@ -397,7 +397,7 @@ function AgentPipeline({ profile }: { profile: LaunchProfile | null }) {
           return (
             <div
               key={agent}
-              className={`rounded-lg border p-3 ${
+              className={`min-w-0 rounded-lg border p-3 ${
                 done
                   ? "border-lime-400/30 bg-lime-400/10"
                   : running
@@ -408,7 +408,7 @@ function AgentPipeline({ profile }: { profile: LaunchProfile | null }) {
               <p className="text-xs font-bold uppercase text-slate-400">
                 Step {index + 1}
               </p>
-              <p className="mt-2 text-sm font-bold text-slate-100">{agent}</p>
+              <p className="mt-2 break-words text-sm font-bold text-slate-100">{agent}</p>
               <p className="mt-2 text-xs leading-5 text-slate-400">{action}</p>
             </div>
           );
