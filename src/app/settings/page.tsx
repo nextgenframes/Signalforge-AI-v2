@@ -102,7 +102,7 @@ export default function SettingsPage() {
               </h2>
               <p className="mt-3 text-sm leading-6 text-slate-400">
                 {allConfigured
-                  ? "All API keys are configured. GTM scans use live Bright Data SERP results and AIMLAPI synthesis."
+                  ? "All API keys are configured. GTM scans use live Bright Data SERP results and DeepSeek V3 synthesis."
                   : "Some API keys are missing. GTM scans use local heuristics and market archetypes — no external calls are made."}
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -187,7 +187,7 @@ export default function SettingsPage() {
               <div>
                 <p className="font-bold text-slate-100">Live mode</p>
                 <p className="mt-2 text-sm leading-6 text-slate-400">
-                  Bright Data fetches real SERP data and competitor pages. AIMLAPI synthesizes
+                  Bright Data fetches real SERP data and competitor pages. DeepSeek V3 (via Featherless AI) synthesizes
                   findings into GTM cards. Requires all API keys to be configured.
                 </p>
               </div>

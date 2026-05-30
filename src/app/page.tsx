@@ -91,7 +91,7 @@ export default function Home() {
             "Bright Data Web Scraper API",
             "Bright Data Scraping Browser",
             "Bright Data MCP Server",
-            "AIMLAPI",
+            "DeepSeek V3 (Featherless AI)",
             "Next.js",
           ].map((item) => (
             <div

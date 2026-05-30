@@ -25,8 +25,8 @@ const behindScenes = [
     body: "Checked dynamic websites where pricing, locations, and service pages render client-side.",
   },
   {
-    title: "AIMLAPI",
-    body: "Generated ICP, pricing, messaging, channel strategy, launch plan, and readiness score.",
+    title: "DeepSeek V3",
+    body: "Generated ICP, pricing, messaging, channel strategy, launch plan, and readiness score via Featherless AI.",
   },
 ];
 
