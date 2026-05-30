@@ -53,9 +53,8 @@ export function DemoShowcase() {
               Pick business. Watch GTM plan appear.
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">
-              SignalForge simulates live market intelligence and AI agent
-              reasoning so judges can see full workflow without waiting on
-              external APIs.
+              SignalForge uses Bright Data for live web intelligence and DeepSeek V3
+              (via Featherless AI) to synthesize all research into actionable GTM cards.
             </p>
           </div>
 
