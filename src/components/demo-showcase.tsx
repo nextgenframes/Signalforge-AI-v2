@@ -14,19 +14,23 @@ const presets = Object.keys(demoInputs) as DemoKey[];
 const behindScenes = [
   {
     title: "Bright Data SERP",
-    body: "Searched competitors, local search intent, SERP rankings, and category demand.",
+    body: "Searched competitors, local search intent, SERP rankings, and category demand signals.",
+    model: null,
   },
   {
     title: "Bright Data Scraper",
     body: "Pulled competitor pricing pages, package language, guarantees, and proof signals.",
+    model: null,
   },
   {
-    title: "Scraping Browser",
+    title: "Bright Data Browser",
     body: "Checked dynamic websites where pricing, locations, and service pages render client-side.",
+    model: null,
   },
   {
     title: "DeepSeek V3",
-    body: "Generated ICP, pricing, messaging, channel strategy, launch plan, and readiness score via Featherless AI.",
+    body: "Synthesized all web research into ICP, competitor gaps, pricing strategy, channel plan, 30-day launch plan, and readiness score.",
+    model: "deepseek-ai/DeepSeek-V3-0324",
   },
 ];
 
@@ -43,6 +47,7 @@ export function DemoShowcase() {
               <Badge>Judge demo</Badge>
               <Badge>Instant report</Badge>
               <Badge>Demo data</Badge>
+              <Badge>Powered by DeepSeek V3</Badge>
             </div>
             <h1 className="mt-5 max-w-3xl text-4xl font-bold sm:text-5xl">
               Pick business. Watch GTM plan appear.
@@ -96,7 +101,7 @@ export function DemoShowcase() {
           {behindScenes.map((step, index) => (
             <article
               key={step.title}
-              className="relative rounded-lg border border-slate-800 bg-slate-900/70 p-4"
+              className={`relative rounded-lg border p-4 ${step.model ? "border-cyan-400/30 bg-cyan-400/10" : "border-slate-800 bg-slate-900/70"}`}
             >
               <div className="flex items-center justify-between gap-3">
                 <span className="grid size-9 place-items-center rounded-lg bg-slate-950 font-bold text-white">
@@ -107,6 +112,9 @@ export function DemoShowcase() {
                 </span>
               </div>
               <h3 className="mt-4 font-bold text-slate-100">{step.title}</h3>
+              {step.model ? (
+                <p className="mt-1 font-mono text-xs font-bold text-cyan-400">{step.model}</p>
+              ) : null}
               <p className="mt-3 text-sm leading-6 text-slate-400">
                 {step.body}
               </p>

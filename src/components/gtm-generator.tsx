@@ -237,15 +237,16 @@ function LoadingState() {
           <h2 className="mt-2 text-2xl font-bold text-slate-100">
             Scanning market signals...
           </h2>
+          <p className="mt-1 font-mono text-xs font-bold text-cyan-400">DeepSeek V3 synthesizing research</p>
         </div>
         <div className="size-12 animate-spin rounded-lg border-4 border-slate-800 border-t-cyan-500" />
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
         {[
-          "Bright Data SERP",
-          "Competitor pricing",
-          "ICP generation",
-          "Launch plan",
+          "Bright Data SERP — competitor discovery",
+          "Bright Data Scraper — pricing intelligence",
+          "DeepSeek V3 — ICP + positioning synthesis",
+          "DeepSeek V3 — launch plan + readiness score",
         ].map((item) => (
           <div key={item} className="rounded-lg bg-slate-900/70 p-4">
             <div className="h-4 w-40 rounded-lg bg-slate-800" />
