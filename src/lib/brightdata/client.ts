@@ -199,6 +199,31 @@ export async function getMarketSignals(
   };
 }
 
+const DIRECTORY_DOMAINS = [
+  "angi.com", "angieslist.com", "homeadvisor.com", "yelp.com", "thumbtack.com",
+  "houzz.com", "porch.com", "trustpilot.com", "g2.com", "capterra.com",
+  "getapp.com", "softwareadvice.com", "reddit.com", "wikipedia.org",
+  "forbes.com", "businessinsider.com", "techcrunch.com", "indeed.com",
+  "glassdoor.com", "bbb.org", "yellowpages.com", "bark.com", "nextdoor.com",
+];
+
+function isDirectory(url: string): boolean {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, "");
+    return DIRECTORY_DOMAINS.some((d) => host === d || host.endsWith(`.${d}`));
+  } catch {
+    return false;
+  }
+}
+
+function cleanSerpTitle(title: string): string {
+  return title
+    .replace(/\s*[|–—]\s*.+$/, "")
+    .replace(/\s*:\s*.+$/, "")
+    .replace(/\s*-\s*(Home|Official Site|Software|Platform|App|Tool|Inc\.?|LLC\.?|Ltd\.?).*$/i, "")
+    .trim();
+}
+
 function normalizeSERP(data: unknown, fallback: SERPResult[]) {
   type BrightSERPItem = {
     title?: string;
@@ -215,12 +240,20 @@ function normalizeSERP(data: unknown, fallback: SERPResult[]) {
 
   if (!Array.isArray(organic) || organic.length === 0) return fallback;
 
-  return organic.slice(0, 10).map((item, index) => ({
-    title: item.title || `Result ${index + 1}`,
-    url: item.link || item.url || "",
-    snippet: item.description || item.snippet || "",
-    rank: index + 1,
-  }));
+  const results: SERPResult[] = [];
+  for (const item of organic) {
+    const url = item.link || item.url || "";
+    if (isDirectory(url)) continue;
+    results.push({
+      title: cleanSerpTitle(item.title || `Result ${results.length + 1}`),
+      url,
+      snippet: item.description || item.snippet || "",
+      rank: results.length + 1,
+    });
+    if (results.length >= 8) break;
+  }
+
+  return results.length > 0 ? results : fallback;
 }
 
 function mockSERP(query: string, location: string): SERPResult[] {

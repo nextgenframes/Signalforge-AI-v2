@@ -220,7 +220,7 @@ export function generateReport(input: BusinessInput): GTMReport {
   };
 }
 
-function generateCompetitors(input: BusinessInput): Competitor[] {
+export function generateCompetitors(input: BusinessInput): Competitor[] {
   const text = `${input.idea} ${input.industry} ${input.type}`.toLowerCase();
 
   if (/resume|career|job|cv/.test(text)) {
